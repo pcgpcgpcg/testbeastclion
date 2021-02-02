@@ -189,8 +189,7 @@ struct http_session::send_lambda
 {
     http_session& self_;
 
-    explicit
-    send_lambda(http_session& self)
+    explicit send_lambda(http_session& self)
             : self_(self)
     {
     }
@@ -202,8 +201,7 @@ struct http_session::send_lambda
         // The lifetime of the message has to extend
         // for the duration of the async operation so
         // we use a shared_ptr to manage it.
-        auto sp = boost::make_shared<
-        http::message<isRequest, Body, Fields>>(std::move(msg));
+        auto sp = boost::make_shared<http::message<isRequest, Body, Fields>>(std::move(msg));
 
         // Write the response
         auto self = self_.shared_from_this();

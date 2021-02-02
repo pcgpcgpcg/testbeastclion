@@ -7,8 +7,8 @@
 // Official repository: https://github.com/vinniefalco/CppCon2018
 //
 
-#include "shared_state.hpp"
-#include "websocket_session.hpp"
+#include "shared_state.h"
+#include "websocket_session.h"
 
 shared_state::shared_state(std::string doc_root)
         : doc_root_(std::move(doc_root))

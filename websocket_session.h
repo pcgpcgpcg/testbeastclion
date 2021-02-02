@@ -10,9 +10,9 @@
 #ifndef BOOST_BEAST_EXAMPLE_WEBSOCKET_CHAT_MULTI_WEBSOCKET_SESSION_HPP
 #define BOOST_BEAST_EXAMPLE_WEBSOCKET_CHAT_MULTI_WEBSOCKET_SESSION_HPP
 
-#include "net.hpp"
-#include "beast.hpp"
-#include "shared_state.hpp"
+#include "net.h"
+#include "beast.h"
+#include "shared_state.h"
 
 #include <cstdlib>
 #include <memory>
@@ -55,9 +55,7 @@ private:
 };
 
 template<class Body, class Allocator>
-void
-websocket_session::
-run(http::request<Body, http::basic_fields<Allocator>> req)
+void websocket_session::run(http::request<Body, http::basic_fields<Allocator>> req)
 {
     // Set suggested timeout settings for the websocket
     ws_.set_option(
