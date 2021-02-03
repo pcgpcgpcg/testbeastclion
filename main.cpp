@@ -25,55 +25,15 @@
 #include <boost/smart_ptr.hpp>
 #include <iostream>
 #include <vector>
+#include "WebSocketServer.h"
 
 int main(int argc, char* argv[])
 {
     // Check command line arguments.
-
-        std::cout <<"Usage: websocket-chat-multi <address> <port> <doc_root> <threads>\n" <<
-                  "Example:\n" <<
-                  "    websocket-chat-server 0.0.0.0 8080 . 5\n";
-    auto address = net::ip::make_address("0.0.0.0");
-    auto port = static_cast<unsigned short>(8001);
-    auto doc_root = "websocket";
-    auto const threads = 5;
-
-    // The io_context is required for all I/O
-    net::io_context ioc;
-
-    // Create and launch a listening port
-    boost::make_shared<listener>(
-            ioc,
-            tcp::endpoint{address, port},
-            boost::make_shared<shared_state>(doc_root))->run();
-
-    // Capture SIGINT and SIGTERM to perform a clean shutdown
-    net::signal_set signals(ioc, SIGINT, SIGTERM);
-    signals.async_wait(
-            [&ioc](boost::system::error_code const&, int)
-            {
-                // Stop the io_context. This will cause run()
-                // to return immediately, eventually destroying the
-                // io_context and any remaining handlers in it.
-                ioc.stop();
-            });
-
-    // Run the I/O service on the requested number of threads
-    std::vector<std::thread> v;
-    v.reserve(threads - 1);
-    for(auto i = threads - 1; i > 0; --i)
-        v.emplace_back(
-                [&ioc]
-                {
-                    ioc.run();
-                });
-    ioc.run();
-
-    // (If we get here, it means we got a SIGINT or SIGTERM)
-
-    // Block until all the threads exit
-    for(auto& t : v)
-        t.join();
+    std::cout << "websocket server started..."<<std::endl;
+    WebSocketServer* pServer = new WebSocketServer("0.0.0.0",8001,"");
+    getchar();
+    delete pServer;
 
     return EXIT_SUCCESS;
 }

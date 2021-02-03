@@ -66,9 +66,8 @@ void websocket_session::run(http::request<Body, http::basic_fields<Allocator>> r
     ws_.set_option(websocket::stream_base::decorator(
             [](websocket::response_type& res)
             {
-                res.set(http::field::server,
-                        std::string(BOOST_BEAST_VERSION_STRING) +
-                        " websocket-chat-multi");
+                res.set(http::field::sec_websocket_protocol,
+                        "protoo");
             }));
 
     // Accept the websocket handshake

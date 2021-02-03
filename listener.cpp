@@ -84,7 +84,7 @@ void listener::on_accept(beast::error_code ec, tcp::socket socket)
         boost::make_shared<http_session>(
                 std::move(socket),
                 state_)->run();
-
+    std::cout<<"Handle a connection"<<std::endl;
     // The new connection gets its own strand
     acceptor_.async_accept(
             net::make_strand(ioc_),
