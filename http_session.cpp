@@ -272,9 +272,9 @@ void http_session::on_read(beast::error_code ec, std::size_t)
     if(websocket::is_upgrade(parser_->get()))
     {
         //emit connectionrequest
-        ConnectionRequestData<http::request_parser<http::string_body>> data;
+        ConnectionRequestData data;
+        data.socket = stream_.release_socket();
         data.req = parser_->release();
-        data.stream = stream_.release_socket();
         this->safeEmit<ConnectionRequestData>("connectionrequest", data);
 //        {
 //            request : request.httpRequest,

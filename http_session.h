@@ -20,7 +20,6 @@
 
 /** Represents an established HTTP connection
 */
-template<class Body, class Allocator>
 struct ConnectionRequestData
 {
     boost::asio::ip::tcp::socket&& socket;
