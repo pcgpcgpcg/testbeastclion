@@ -12,7 +12,8 @@ WebSocketServer::WebSocketServer(const char* address, int port, const char* doc_
     m_state = boost::make_shared<shared_state>(doc_root);
     // TODO how to set options to server (keepalive:true keepaliveInterval:60000)
     // Create and launch a listening port
-    boost::make_shared<listener>(m_ioc,tcp::endpoint{ip_address, ip_port}, doc_root)->run();
+    boost::shared_ptr<listener> listener = boost::make_shared<listener>(m_ioc,tcp::endpoint{ip_address, ip_port}, doc_root)->run();
+    listener.on("connectionrequest",xxx);
     // Capture SIGINT and SIGTERM to perform a clean shutdown
     net::signal_set signals(m_ioc, SIGINT, SIGTERM);
     signals.async_wait(

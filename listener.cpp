@@ -81,8 +81,11 @@ void listener::on_accept(beast::error_code ec, tcp::socket socket)
         return fail(ec, "accept");
     else
         // Launch a new session for this connection
-        boost::make_shared<http_session>(
+        boost::shared_ptr<http_session> httpSession = boost::make_shared<http_session>(
                 std::move(socket),doc_root)->run();
+    httpSession.on("connectionrequest",[]()=>{
+        this->emit("connectionrequest",xxx);
+    });
     std::cout<<"Handle a connection"<<std::endl;
     // The new connection gets its own strand
     acceptor_.async_accept(
