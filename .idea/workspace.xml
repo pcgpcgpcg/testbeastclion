@@ -11,14 +11,20 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="11283073-5108-487e-91bb-c98d0cf836da" name="Default Changelist" comment="">
+    <list default="true" id="02f0900b-cb6f-49fe-b74e-8cd54cc42036" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/WebsocketTransport.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/WebsocketTransport.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/advanced_server.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Room.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Room.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Room.h" beforeDir="false" afterPath="$PROJECT_DIR$/Room.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WebSocketServer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/WebSocketServer.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/http_session.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/http_session.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/main.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shared_state.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/shared_state.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/websocket_session.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/websocket_session.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/websocket_session.h" beforeDir="false" afterPath="$PROJECT_DIR$/websocket_session.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/http_session.h" beforeDir="false" afterPath="$PROJECT_DIR$/http_session.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/listener.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/listener.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/listener.h" beforeDir="false" afterPath="$PROJECT_DIR$/listener.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/websocket_session.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/websocket_session.h" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -32,27 +38,35 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="ProblemsViewState">
-    <option name="selectedIndex" value="1" />
+  <component name="ProjectId" id="1nxhbEEee9Y9nrUJR4tx5MV6JFm" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
   </component>
-  <component name="ProjectId" id="1nurKFxOpad4K1hTAvLorEKm0Qj" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
+    <property name="ASKED_SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="cf.first.check.clang-format" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
-    <property name="settings.editor.selected.configurable" value="CMakeSettings" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/utils" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/utils" />
+      <recent name="$PROJECT_DIR$" />
+      <recent name="$PROJECT_DIR$/uitls" />
+    </key>
   </component>
   <component name="RunManager">
-    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" PASS_PARENT_ENVS_2="true">
+    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
-        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
     <configuration name="testbeastclion" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="testbeastclion" TARGET_NAME="testbeastclion" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="testbeastclion" RUN_TARGET_NAME="testbeastclion">
@@ -69,13 +83,13 @@
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="11283073-5108-487e-91bb-c98d0cf836da" name="Default Changelist" comment="" />
-      <created>1612250752010</created>
+      <changelist id="02f0900b-cb6f-49fe-b74e-8cd54cc42036" name="Default Changelist" comment="" />
+      <created>1612337720093</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1612250752010</updated>
-      <workItem from="1612250754426" duration="5515000" />
-      <workItem from="1612258194940" duration="2735000" />
+      <updated>1612337720093</updated>
+      <workItem from="1612337722603" duration="13564000" />
+      <workItem from="1612427921047" duration="16292000" />
     </task>
     <servers />
   </component>
@@ -93,5 +107,8 @@
       </map>
     </option>
     <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
   </component>
 </project>

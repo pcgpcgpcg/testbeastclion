@@ -15,16 +15,17 @@
 #include <boost/smart_ptr.hpp>
 #include <memory>
 #include <string>
+#include "EnhancedEventEmitter.hpp"
 
 // Forward declaration
 class shared_state;
 
 // Accepts incoming connections and launches the sessions
-class listener : public boost::enable_shared_from_this<listener>
+class listener : public boost::enable_shared_from_this<listener>, public mediasoup::EnhancedEventEmitter
 {
     net::io_context& ioc_;
     tcp::acceptor acceptor_;
-    boost::shared_ptr<shared_state> state_;
+    const char* doc_root;
 
     void fail(beast::error_code ec, char const* what);
     void on_accept(beast::error_code ec, tcp::socket socket);
@@ -33,7 +34,7 @@ public:
     listener(
             net::io_context& ioc,
             tcp::endpoint endpoint,
-            boost::shared_ptr<shared_state> const& state);
+            const char* doc_root);
 
     // Start accepting incoming connections
     void run();

@@ -12,19 +12,26 @@
 
 #include "net.h"
 #include "beast.h"
-#include "shared_state.h"
 #include <boost/optional.hpp>
 #include <boost/smart_ptr.hpp>
 #include <cstdlib>
 #include <memory>
+#include "EnhancedEventEmitter.hpp"
 
 /** Represents an established HTTP connection
 */
-class http_session : public boost::enable_shared_from_this<http_session>
+template<class Body, class Allocator>
+struct ConnectionRequestData
+{
+    boost::asio::ip::tcp::socket&& socket;
+    http_request&& req;
+};
+
+class http_session : public boost::enable_shared_from_this<http_session>, public mediasoup::EnhancedEventEmitter
 {
     beast::tcp_stream stream_;
     beast::flat_buffer buffer_;
-    boost::shared_ptr<shared_state> state_;
+    const char* doc_root;
 
     // The parser is stored in an optional container so we can
     // construct it from scratch it at the beginning of each new message.
@@ -38,9 +45,7 @@ class http_session : public boost::enable_shared_from_this<http_session>
     void on_write(beast::error_code ec, std::size_t, bool close);
 
 public:
-    http_session(
-            tcp::socket&& socket,
-            boost::shared_ptr<shared_state> const& state);
+    http_session(tcp::socket&& socket, const char* doc_root);
 
     void run();
 };

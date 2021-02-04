@@ -14,10 +14,10 @@
 listener::listener(
         net::io_context& ioc,
         tcp::endpoint endpoint,
-        boost::shared_ptr<shared_state> const& state)
+        const char* doc_root)
         : ioc_(ioc)
         , acceptor_(ioc)
-        , state_(state)
+        , doc_root(doc_root)
 {
     beast::error_code ec;
 
@@ -82,8 +82,7 @@ void listener::on_accept(beast::error_code ec, tcp::socket socket)
     else
         // Launch a new session for this connection
         boost::make_shared<http_session>(
-                std::move(socket),
-                state_)->run();
+                std::move(socket),doc_root)->run();
     std::cout<<"Handle a connection"<<std::endl;
     // The new connection gets its own strand
     acceptor_.async_accept(

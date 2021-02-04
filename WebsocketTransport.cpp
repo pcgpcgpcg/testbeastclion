@@ -7,24 +7,22 @@
 // Official repository: https://github.com/vinniefalco/CppCon2018
 //
 
-#include "websocket_session.h"
+#include "WebSocketTransport.h"
 #include <iostream>
 
-websocket_session::websocket_session(
-        tcp::socket&& socket,
-        boost::shared_ptr<shared_state> const& state)
+WebSocketTransport::WebSocketTransport(
+        tcp::socket&& socket)
         : ws_(std::move(socket))
-        , state_(state)
 {
 }
 
-websocket_session::~websocket_session()
+WebSocketTransport::~WebSocketTransport()
 {
     // Remove this session from the list of active sessions
-    state_->leave(this);
+    //state_->leave(this);
 }
 
-void websocket_session::fail(beast::error_code ec, char const* what)
+void WebSocketTransport::fail(beast::error_code ec, char const* what)
 {
     // Don't report these
     if( ec == net::error::operation_aborted ||
@@ -34,24 +32,24 @@ void websocket_session::fail(beast::error_code ec, char const* what)
     std::cerr << what << ": " << ec.message() << "\n";
 }
 
-void websocket_session::on_accept(beast::error_code ec)
+void WebSocketTransport::on_accept(beast::error_code ec)
 {
     // Handle the error, if any
     if(ec)
         return fail(ec, "accept");
 
     // Add this session to the list of active sessions
-    state_->join(this);
+    //state_->join(this);
 
     // Read a message
     ws_.async_read(
             buffer_,
             beast::bind_front_handler(
-                    &websocket_session::on_read,
+                    &WebSocketTransport::on_read,
                     shared_from_this()));
 }
 
-void websocket_session::on_read(beast::error_code ec, std::size_t)
+void WebSocketTransport::on_read(beast::error_code ec, std::size_t)
 {
     // Handle the error, if any
     if(ec)
@@ -67,11 +65,11 @@ void websocket_session::on_read(beast::error_code ec, std::size_t)
     ws_.async_read(
             buffer_,
             beast::bind_front_handler(
-                    &websocket_session::on_read,
+                    &WebSocketTransport::on_read,
                     shared_from_this()));
 }
 
-void websocket_session::send(boost::shared_ptr<std::string const> const& ss)
+void WebSocketTransport::send(boost::shared_ptr<std::string const> const& ss)
 {
     // Post our work to the strand, this ensures
     // that the members of `this` will not be
@@ -80,12 +78,12 @@ void websocket_session::send(boost::shared_ptr<std::string const> const& ss)
     net::post(
             ws_.get_executor(),
             beast::bind_front_handler(
-                    &websocket_session::on_send,
+                    &WebSocketTransport::on_send,
                     shared_from_this(),
                     ss));
 }
 
-void websocket_session::on_send(boost::shared_ptr<std::string const> const& ss)
+void WebSocketTransport::on_send(boost::shared_ptr<std::string const> const& ss)
 {
     // Always add to queue
     queue_.push_back(ss);
@@ -98,11 +96,11 @@ void websocket_session::on_send(boost::shared_ptr<std::string const> const& ss)
     ws_.async_write(
             net::buffer(*queue_.front()),
             beast::bind_front_handler(
-                    &websocket_session::on_write,
+                    &WebSocketTransport::on_write,
                     shared_from_this()));
 }
 
-void websocket_session::on_write(beast::error_code ec, std::size_t)
+void WebSocketTransport::on_write(beast::error_code ec, std::size_t)
 {
     // Handle the error, if any
     if(ec)
@@ -116,6 +114,6 @@ void websocket_session::on_write(beast::error_code ec, std::size_t)
         ws_.async_write(
                 net::buffer(*queue_.front()),
                 beast::bind_front_handler(
-                        &websocket_session::on_write,
+                        &WebSocketTransport::on_write,
                         shared_from_this()));
 }

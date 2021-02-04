@@ -19,12 +19,9 @@
 #include <string>
 #include <vector>
 
-// Forward declaration
-class shared_state;
-
 /** Represents an active WebSocket connection to the server
 */
-class websocket_session : public boost::enable_shared_from_this<websocket_session>
+class WebSocketTransport : public boost::enable_shared_from_this<websocket_session>
 {
     beast::flat_buffer buffer_;
     websocket::stream<beast::tcp_stream> ws_;
@@ -37,15 +34,11 @@ class websocket_session : public boost::enable_shared_from_this<websocket_sessio
     void on_write(beast::error_code ec, std::size_t bytes_transferred);
 
 public:
-    websocket_session(
-            tcp::socket&& socket,
-            boost::shared_ptr<shared_state> const& state);
-
-    ~websocket_session();
+    WebSocketTransport(tcp::socket&& socket);
+    ~WebSocketTransport();
 
     template<class Body, class Allocator>
-    void
-    run(http::request<Body, http::basic_fields<Allocator>> req);
+    void run(http::request<Body, http::basic_fields<Allocator>> req);
 
     // Send a message
     void send(boost::shared_ptr<std::string const> const& ss);
@@ -55,7 +48,7 @@ private:
 };
 
 template<class Body, class Allocator>
-void websocket_session::run(http::request<Body, http::basic_fields<Allocator>> req)
+void WebSocketTransport::run(http::request<Body, http::basic_fields<Allocator>> req)
 {
     // Set suggested timeout settings for the websocket
     ws_.set_option(
@@ -74,7 +67,7 @@ void websocket_session::run(http::request<Body, http::basic_fields<Allocator>> r
     ws_.async_accept(
             req,
             beast::bind_front_handler(
-                    &websocket_session::on_accept,
+                    &WebSocketTransport::on_accept,
                     shared_from_this()));
 }
 

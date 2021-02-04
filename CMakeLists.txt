@@ -4,7 +4,7 @@ project(testbeastclion)
 set(CMAKE_CXX_STANDARD 14)
 set(Boost_SYSTEM_LIBRARY ${CMAKE_CURRENT_SOURCE_DIR}/lib)
 
-add_executable(testbeastclion main.cpp http_session.cpp http_session.h websocket_session.cpp websocket_session.h
+add_executable(testbeastclion main.cpp http_session.cpp http_session.h WebSocketTransport.cpp WebSocketTransport.h
         shared_state.cpp shared_state.h listener.cpp listener.h net.h beast.h EnhancedEventEmitter.hpp WebSocketServer.cpp WebSocketServer.h
         Room.cpp Room.h Peer.cpp Peer.h Message.cpp Message.h)
 target_include_directories(testbeastclion

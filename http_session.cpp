@@ -8,7 +8,7 @@
 //
 
 #include "http_session.h"
-#include "websocket_session.h"
+#include "WebSocketTransport.h"
 #include <boost/config.hpp>
 #include <iostream>
 
@@ -17,8 +17,7 @@
 //------------------------------------------------------------------------------
 
 // Return a reasonable mime type based on the extension of a file.
-beast::string_view
-mime_type(beast::string_view path)
+beast::string_view mime_type(beast::string_view path)
 {
     using beast::iequals;
     auto const ext = [&path]
@@ -54,8 +53,7 @@ mime_type(beast::string_view path)
 
 // Append an HTTP rel-path to a local filesystem path.
 // The returned path is normalized for the platform.
-std::string
-path_cat(
+std::string path_cat(
         beast::string_view base,
         beast::string_view path)
 {
@@ -195,8 +193,7 @@ struct http_session::send_lambda
     }
 
     template<bool isRequest, class Body, class Fields>
-    void
-    operator()(http::message<isRequest, Body, Fields>&& msg) const
+    void operator()(http::message<isRequest, Body, Fields>&& msg) const
     {
         // The lifetime of the message has to extend
         // for the duration of the async operation so
@@ -217,11 +214,7 @@ struct http_session::send_lambda
 
 //------------------------------------------------------------------------------
 
-http_session::http_session(
-        tcp::socket&& socket,
-        boost::shared_ptr<shared_state> const& state)
-        : stream_(std::move(socket))
-        , state_(state)
+http_session::http_session(tcp::socket&& socket, const char* doc_root): stream_(std::move(socket),doc_root(doc_root))
 {
 }
 
@@ -278,11 +271,22 @@ void http_session::on_read(beast::error_code ec, std::size_t)
     // See if it is a WebSocket Upgrade
     if(websocket::is_upgrade(parser_->get()))
     {
+        //emit connectionrequest
+        ConnectionRequestData<http::request_parser<http::string_body>> data;
+        data.req = parser_->release();
+        data.stream = stream_.release_socket();
+        this->safeEmit<ConnectionRequestData>("connectionrequest", data);
+//        {
+//            request : request.httpRequest,
+//                origin  : request.origin,
+//                    socket  : request.httpRequest.socket
+//        }
+        //http::request<Body, http::basic_fields<Allocator>> req
+        // TODO at on event,call below code
         // Create a websocket session, transferring ownership
         // of both the socket and the HTTP request.
-        boost::make_shared<websocket_session>(
-                stream_.release_socket(),
-                state_)->run(parser_->release());
+        boost::make_shared<WebSocketTransport>(
+                stream_.release_socket())->run(parser_->release());
         return;
     }
 
@@ -329,7 +333,7 @@ void http_session::on_read(beast::error_code ec, std::size_t)
     // place of a generic lambda which is not available in C++11
     //
     handle_request(
-            state_->doc_root(),
+            doc_root,
             parser_->release(),
             send_lambda(*this));
 
