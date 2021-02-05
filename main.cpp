@@ -18,20 +18,20 @@
 */
 //------------------------------------------------------------------------------
 
-#include "listener.h"
-#include "shared_state.h"
-
 #include <boost/asio/signal_set.hpp>
 #include <boost/smart_ptr.hpp>
 #include <iostream>
 #include <vector>
-#include "WebSocketServer.h"
+#include "Transport/WebSocketServer.h"
 
 int main(int argc, char* argv[])
 {
     // Check command line arguments.
     std::cout << "websocket server started..."<<std::endl;
     WebSocketServer* pServer = new WebSocketServer("0.0.0.0",8001,"");
+    pServer->on("connectionrequest",[&](std::string& roomid, std::string& peerid, WebSocketTransport* transport){
+       std::cout<<"on connectionrequest"<<std::endl;
+    });
     getchar();
     delete pServer;
 

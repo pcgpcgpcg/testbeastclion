@@ -4,7 +4,7 @@
 
 #ifndef TESTBEASTCLION_ROOM_H
 #define TESTBEASTCLION_ROOM_H
-#include "EnhancedEventEmitter.hpp"
+#include "EventEmitter.hpp"
 #include <string>
 #include <map>
 #include <iostream>
@@ -12,26 +12,25 @@
 
 using namespace std;
 
-// Forward declaration
-class websocket_session;
-
 namespace protoo {
-    class Room : public mediasoup::EnhancedEventEmitter {
+    class Room : public EventEmitter {
     public:
         Room();
         ~Room();
     public:
         bool closed();
         void close();
-        std::map<string,Peer>& getPeers();
-        std::shared_ptr<Peer> createPeer(string peerId, websocket_session* transport);
+        std::map<string,shared_ptr<Peer>>& getPeers();
+        std::shared_ptr<Peer> createPeer(string peerId, WebSocketTransport* transport);
         bool hasPeer(string peerId);
-        Peer* getPeer(string peerId);
+        shared_ptr<Peer> getPeer(string peerId);
     private:
         // Map of Peers indexed by id
-        std::map<string,Peer> m_peers;
+        std::map<string,shared_ptr<Peer>> m_peers;
         //whether room was closed
         bool m_closed;
+        // This mutex synchronizes all access to WebSocketTransport
+        std::mutex mutex_;
     };
 }
 

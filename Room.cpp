@@ -19,7 +19,7 @@ namespace protoo {
         return this->m_closed;
     }
 
-    std::map<string,Peer>& Room::getPeers()
+    std::map<string,shared_ptr<Peer>>& Room::getPeers()
     {
         return m_peers;
     }
@@ -32,13 +32,14 @@ namespace protoo {
             return;
         }
         std::cout<<"Room close()"<<std::endl;
-        for(auto it : this->m_peers)
+        std::lock_guard<std::mutex> lock(mutex_);
+        for(auto& it : this->m_peers)
         {
-            it.second.close();
+            it.second->close();
         }
     }
 
-    std::shared_ptr<Peer> Room::createPeer(string peerId, websocket_session* transport)
+    std::shared_ptr<Peer> Room::createPeer(string peerId, WebSocketTransport* transport)
     {
        if(transport == nullptr)
        {
@@ -51,13 +52,14 @@ namespace protoo {
            return nullptr;
        }
        //Create the Peer instance
+        std::lock_guard<std::mutex> lock(mutex_);
        shared_ptr<Peer> peer(new Peer(peerId, transport));
        //Peer peer(peerId, transport);
         // Store it in the map.
-        this->m_peers.emplace(peer->id,peer);
+        this->m_peers.emplace(peer->id(),peer);
         // TODO
-        peer->on('close', [&] => {
-            this->m_peers.erase(peer->id);
+        peer->on("close", [&]() {
+            this->m_peers.erase(peer->id());
         });
         return peer;
     }
@@ -67,9 +69,9 @@ namespace protoo {
         return this->m_peers.find(peerId)!=m_peers.end();
     }
 
-    Peer* Room::getPeer(string peerId)
+    shared_ptr<Peer> Room::getPeer(string peerId)
     {
-        return &(this->m_peers[peerId]);
+        return this->m_peers[peerId];
     }
 
 

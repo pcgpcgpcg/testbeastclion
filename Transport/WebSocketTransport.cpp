@@ -22,6 +22,21 @@ WebSocketTransport::~WebSocketTransport()
     //state_->leave(this);
 }
 
+bool WebSocketTransport::closed()
+{
+    return m_closed;
+}
+
+void WebSocketTransport::close()
+{
+    if(m_closed){
+        return;
+    }
+    m_closed = true;
+    ws_.close("just close this ws");
+    this->emit("close");
+}
+
 void WebSocketTransport::fail(beast::error_code ec, char const* what)
 {
     // Don't report these
@@ -56,8 +71,10 @@ void WebSocketTransport::on_read(beast::error_code ec, std::size_t)
         return fail(ec, "read");
 
     // Send to all connections
-    state_->send(beast::buffers_to_string(buffer_.data()));
-
+    //state_->send(beast::buffers_to_string(buffer_.data()));
+    std::string message = beast::buffers_to_string(buffer_.data());
+    //TODO emit received message to uplevel
+    this->emit("message", protoo::Message::parse(message) );
     // Clear the buffer
     buffer_.consume(buffer_.size());
 
@@ -74,13 +91,25 @@ void WebSocketTransport::send(boost::shared_ptr<std::string const> const& ss)
     // Post our work to the strand, this ensures
     // that the members of `this` will not be
     // accessed concurrently.
-
     net::post(
             ws_.get_executor(),
             beast::bind_front_handler(
                     &WebSocketTransport::on_send,
                     shared_from_this(),
                     ss));
+}
+
+void WebSocketTransport::send(json ss)
+{
+    // Post our work to the strand, this ensures
+    // that the members of `this` will not be
+    // accessed concurrently.
+    net::post(
+            ws_.get_executor(),
+            beast::bind_front_handler(
+                    &WebSocketTransport::on_send,
+                    shared_from_this(),
+                    boost::make_shared<std::string const>(ss.dump())));
 }
 
 void WebSocketTransport::on_send(boost::shared_ptr<std::string const> const& ss)

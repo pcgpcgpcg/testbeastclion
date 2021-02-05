@@ -10,23 +10,26 @@
 #ifndef BOOST_BEAST_EXAMPLE_WEBSOCKET_CHAT_MULTI_HTTP_SESSION_HPP
 #define BOOST_BEAST_EXAMPLE_WEBSOCKET_CHAT_MULTI_HTTP_SESSION_HPP
 
-#include "net.h"
-#include "beast.h"
 #include <boost/optional.hpp>
 #include <boost/smart_ptr.hpp>
 #include <cstdlib>
 #include <memory>
-#include "EnhancedEventEmitter.hpp"
+#include "EventEmitter.hpp"
+#include "json.hpp"
+#include <boost/asio.hpp>
+#include <boost/beast.hpp>
+namespace beast = boost::beast;                 // from <boost/beast.hpp>
+namespace http = beast::http;                   // from <boost/beast/http.hpp>
+namespace websocket = beast::websocket;         // from <boost/beast/websocket.hpp>
+namespace net = boost::asio;                    // from <boost/asio.hpp>
+using tcp = boost::asio::ip::tcp;               // from <boost/asio/ip/tcp.hpp>
+
+using namespace nlohmann;
 
 /** Represents an established HTTP connection
 */
-struct ConnectionRequestData
-{
-    boost::asio::ip::tcp::socket&& socket;
-    http_request&& req;
-};
 
-class http_session : public boost::enable_shared_from_this<http_session>, public mediasoup::EnhancedEventEmitter
+class HttpTransport : public boost::enable_shared_from_this<HttpTransport>, public EventEmitter
 {
     beast::tcp_stream stream_;
     beast::flat_buffer buffer_;
@@ -44,7 +47,7 @@ class http_session : public boost::enable_shared_from_this<http_session>, public
     void on_write(beast::error_code ec, std::size_t, bool close);
 
 public:
-    http_session(tcp::socket&& socket, const char* doc_root);
+    HttpTransport(tcp::socket&& socket, const char* doc_root);
 
     void run();
 };

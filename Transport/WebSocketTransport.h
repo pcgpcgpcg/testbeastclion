@@ -10,22 +10,26 @@
 #ifndef BOOST_BEAST_EXAMPLE_WEBSOCKET_CHAT_MULTI_WEBSOCKET_SESSION_HPP
 #define BOOST_BEAST_EXAMPLE_WEBSOCKET_CHAT_MULTI_WEBSOCKET_SESSION_HPP
 
-#include "net.h"
-#include "beast.h"
-#include "shared_state.h"
-
 #include <cstdlib>
 #include <memory>
 #include <string>
 #include <vector>
+#include "EventEmitter.hpp"
+#include "Message.h"
+#include <boost/asio.hpp>
+#include <boost/beast.hpp>
+namespace beast = boost::beast;                 // from <boost/beast.hpp>
+namespace http = beast::http;                   // from <boost/beast/http.hpp>
+namespace websocket = beast::websocket;         // from <boost/beast/websocket.hpp>
+namespace net = boost::asio;                    // from <boost/asio.hpp>
+using tcp = boost::asio::ip::tcp;               // from <boost/asio/ip/tcp.hpp>
 
 /** Represents an active WebSocket connection to the server
 */
-class WebSocketTransport : public boost::enable_shared_from_this<websocket_session>
+class WebSocketTransport : public boost::enable_shared_from_this<WebSocketTransport>, public EventEmitter
 {
     beast::flat_buffer buffer_;
     websocket::stream<beast::tcp_stream> ws_;
-    boost::shared_ptr<shared_state> state_;
     std::vector<boost::shared_ptr<std::string const>> queue_;
 
     void fail(beast::error_code ec, char const* what);
@@ -36,15 +40,20 @@ class WebSocketTransport : public boost::enable_shared_from_this<websocket_sessi
 public:
     WebSocketTransport(tcp::socket&& socket);
     ~WebSocketTransport();
+    bool closed();
+    void close();
 
     template<class Body, class Allocator>
     void run(http::request<Body, http::basic_fields<Allocator>> req);
 
     // Send a message
     void send(boost::shared_ptr<std::string const> const& ss);
+    void send(json ss);
 
 private:
     void on_send(boost::shared_ptr<std::string const> const& ss);
+private:
+    bool m_closed = false;
 };
 
 template<class Body, class Allocator>

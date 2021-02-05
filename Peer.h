@@ -2,9 +2,10 @@
 #define PEER_H
 
 #include "json.hpp"
-#include "WebSocketTransport.h"
+#include "Transport/WebSocketTransport.h"
 #include <stdexcept>
 #include "utils.h"
+#include "EventEmitter.hpp"
 
 using namespace std;
 using namespace nlohmann;
@@ -38,21 +39,14 @@ namespace protoo {
     {
     }
 
-    class Peer : public WebSocketTransport::TransportListener {
+    class Peer : public EventEmitter {
     public:
-        Peer(string url);
+        Peer(string peerId, WebSocketTransport* pTransport);
         ~Peer();
-        /* Virtual methods inherited from WebsocketTransport::TransportListener. */
-    public:
-        void onOpen() override;
-        void onClosed() override;
-        void onMessage(json message) override;
-        void onDisconnected() override;
-        void onFailed() override;
 
     public:
+        string id();
         bool closed();
-        bool connected();
         json data();
         void setData(json data);
         void close();
@@ -61,18 +55,15 @@ namespace protoo {
         void notify(string method, json data = json({}));
 
     private:
-        //void handleTransport();
+        void _handleTransport();
         void handleRequest(json request);
         void handleResponse(json response);
         void handleNotification(json notification);
 
-    public:
-        event::emitter_t<std::shared_ptr<PROTOO_MSG>> m_emitter;
-
     private:
         bool m_closed = false;
-        unique_ptr<WebSocketTransport> m_pTransport;
-        bool m_connected = false;
+        string m_peerId;
+        WebSocketTransport* m_pTransport;
         json m_data = json({});
         map<int, shared_ptr<SENT_MSG>> m_sents;
         PeerTimer mTimer;

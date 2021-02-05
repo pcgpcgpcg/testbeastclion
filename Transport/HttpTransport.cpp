@@ -7,7 +7,7 @@
 // Official repository: https://github.com/vinniefalco/CppCon2018
 //
 
-#include "http_session.h"
+#include "HttpTransport.h"
 #include "WebSocketTransport.h"
 #include <boost/config.hpp>
 #include <iostream>
@@ -183,11 +183,11 @@ void handle_request(
 
 //------------------------------------------------------------------------------
 
-struct http_session::send_lambda
+struct HttpTransport::send_lambda
 {
-    http_session& self_;
+    HttpTransport& self_;
 
-    explicit send_lambda(http_session& self)
+    explicit send_lambda(HttpTransport& self)
             : self_(self)
     {
     }
@@ -214,17 +214,17 @@ struct http_session::send_lambda
 
 //------------------------------------------------------------------------------
 
-http_session::http_session(tcp::socket&& socket, const char* doc_root): stream_(std::move(socket),doc_root(doc_root))
+HttpTransport::HttpTransport(tcp::socket&& socket, const char* doc_root): stream_(std::move(socket)), doc_root(doc_root)
 {
 }
 
-void http_session::run()
+void HttpTransport::run()
 {
     do_read();
 }
 
 // Report a failure
-void http_session::fail(beast::error_code ec, char const* what)
+void HttpTransport::fail(beast::error_code ec, char const* what)
 {
     // Don't report on canceled operations
     if(ec == net::error::operation_aborted)
@@ -233,7 +233,7 @@ void http_session::fail(beast::error_code ec, char const* what)
     std::cerr << what << ": " << ec.message() << "\n";
 }
 
-void http_session::do_read()
+void HttpTransport::do_read()
 {
     // Construct a new parser for each message
     parser_.emplace();
@@ -251,11 +251,11 @@ void http_session::do_read()
             buffer_,
             parser_->get(),
             beast::bind_front_handler(
-                    &http_session::on_read,
+                    &HttpTransport::on_read,
                     shared_from_this()));
 }
 
-void http_session::on_read(beast::error_code ec, std::size_t)
+void HttpTransport::on_read(beast::error_code ec, std::size_t)
 {
     // This means they closed the connection
     if(ec == http::error::end_of_stream)
@@ -272,10 +272,14 @@ void http_session::on_read(beast::error_code ec, std::size_t)
     if(websocket::is_upgrade(parser_->get()))
     {
         //emit connectionrequest
-        ConnectionRequestData data;
-        data.socket = stream_.release_socket();
-        data.req = parser_->release();
-        this->safeEmit<ConnectionRequestData>("connectionrequest", data);
+        json request = {
+                {"request", true},
+                {"roomid", "1234569"},
+                {"peerid", "pcgpcg"}
+        };
+        boost::shared_ptr<WebSocketTransport> _ws = boost::make_shared<WebSocketTransport>(stream_.release_socket());
+        _ws->run(parser_->release());
+        this->emit("connectionrequest", "1234569","pcgpcg", _ws.get());
 //        {
 //            request : request.httpRequest,
 //                origin  : request.origin,
@@ -340,7 +344,7 @@ void http_session::on_read(beast::error_code ec, std::size_t)
 #endif
 }
 
-void http_session::on_write(beast::error_code ec, std::size_t, bool close)
+void HttpTransport::on_write(beast::error_code ec, std::size_t, bool close)
 {
     // Handle the error, if any
     if(ec)
